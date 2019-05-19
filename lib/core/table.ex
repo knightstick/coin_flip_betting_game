@@ -1,10 +1,10 @@
 defmodule CoinFlipBettingGame.Core.Table do
   alias CoinFlipBettingGame.Core.{Coin, Bets}
 
-  defstruct coin: nil, players: [], bets: nil
+  defstruct name: nil, coin: nil, players: [], bets: nil
 
-  def new() do
-    %__MODULE__{coin: Coin.flip(), bets: Bets.new()}
+  def new(name) do
+    %__MODULE__{name: name, coin: Coin.flip(), bets: Bets.new()}
   end
 
   def join(table, player, stake) when is_binary(player) do

@@ -5,7 +5,7 @@ defmodule TableTest do
 
   describe "join" do
     test "joining adds name to list of players" do
-      table = Table.new() |> Table.join("chris", 1000)
+      table = Table.new("table1") |> Table.join("chris", 1000)
       assert "chris" in table.players
 
       table = table |> Table.join("erin", 1000)
@@ -13,7 +13,7 @@ defmodule TableTest do
     end
 
     test "joining adds stake to bets" do
-      table = Table.new() |> Table.join("chris", 1000)
+      table = Table.new("table1") |> Table.join("chris", 1000)
 
       assert stakes(table, "chris") == 1000
     end
@@ -72,7 +72,7 @@ defmodule TableTest do
 
   defp table_with_players(players) do
     players
-    |> Enum.reduce(Table.new(), fn player, table ->
+    |> Enum.reduce(Table.new("table1"), fn player, table ->
       Table.join(table, player, 1000)
     end)
   end
