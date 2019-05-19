@@ -40,7 +40,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     {:reply, returned_stake, table}
   end
 
-  def join_or_create(table_name, _player) do
+  def join_or_create(table_name, player) do
     # TODO: join if already started
     table = Table.new(table_name)
 
@@ -49,7 +49,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
       {__MODULE__, table}
     )
 
-    # TODO: join the table
+    join_table(table_name, player)
   end
 
   def join_table(name, player) do
