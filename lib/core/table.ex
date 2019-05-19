@@ -34,4 +34,8 @@ defmodule CoinFlipBettingGame.Core.Table do
     remaining_bets = Bets.cash_out(table.bets, player)
     %__MODULE__{table | players: remaining_players, bets: remaining_bets}
   end
+
+  def total_money(table, player) do
+    Bets.total_money(table.bets, player)
+  end
 end

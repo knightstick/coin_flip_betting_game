@@ -23,9 +23,9 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def handle_call({:cash_out, player}, _from, table) do
+    returned_stake = Table.total_money(table, player)
     table = Table.cash_out(table, player)
-    # TODO: return amount of money cashed out
-    {:reply, 0, table}
+    {:reply, returned_stake, table}
   end
 
   def join_table(session, player) do
