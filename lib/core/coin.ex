@@ -10,6 +10,10 @@ defmodule CoinFlipBettingGame.Core.Coin do
   end
 
   defp random_value() do
-    Enum.random([:heads, :tails])
+    Enum.random(coin_values())
+  end
+
+  defp coin_values() do
+    ~w(heads tails)a
   end
 end
