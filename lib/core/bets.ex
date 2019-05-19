@@ -40,7 +40,7 @@ defmodule CoinFlipBettingGame.Core.Bets do
     wagered
     |> Enum.map(fn {a_player, {value, amount}} ->
       case {a_player, value} do
-        {^player, ^winning_value} -> amount
+        {^player, ^winning_value} -> amount * 2 # Hardcoded odds for now
         _ -> 0
       end
     end)
