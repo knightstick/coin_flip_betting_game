@@ -46,4 +46,10 @@ defmodule CoinFlipBettingGame.Core.Bets do
     end)
     |> Enum.sum()
   end
+
+  def cash_out(bets, player) do
+    new_stakes = Map.delete(bets.stakes, player)
+    new_wagers = Enum.reject(bets.wagered, fn {a_player, _bet} -> a_player == player end)
+    %__MODULE__{ bets | stakes: new_stakes, wagered: new_wagers }
+  end
 end
