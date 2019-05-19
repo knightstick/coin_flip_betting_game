@@ -8,8 +8,9 @@ defmodule CoinFlipBettingGame.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Starts a worker by calling: CoinFlipBettingGame.Worker.start_link(arg)
-      # {CoinFlipBettingGame.Worker, arg}
+      {Registry, [name: CoinFlipBettingGame.Registry.TableSession, keys: :unique]},
+      {DynamicSupervisor,
+       [name: CoinFlipBettingGame.Supervisor.TableSession, strategy: :one_for_one]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

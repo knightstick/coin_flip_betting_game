@@ -3,6 +3,18 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   alias CoinFlipBettingGame.Core.Table
 
+  def child_spec(table) do
+    %{
+      id: {__MODULE__, table.name},
+      start: {__MODULE__, :start_link, [table]},
+      restart: :temporary
+    }
+  end
+
+  def start_link(table) do
+    GenServer.start(__MODULE__, table, [name: via(table.name)])
+  end
+
   def init(table) do
     {:ok, table}
   end
@@ -28,23 +40,43 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     {:reply, returned_stake, table}
   end
 
-  def join_table(session, player) do
-    GenServer.call(session, {:join_table, player})
+  def join_or_create(table_name, _player) do
+    # TODO: join if already started
+    table = Table.new(table_name)
+
+    DynamicSupervisor.start_child(
+      CoinFlipBettingGame.Supervisor.TableSession,
+      {__MODULE__, table}
+    )
+
+    # TODO: join the table
   end
 
-  def bet(session, player, {_, _} = bet) do
-    GenServer.call(session, {:bet, player, bet})
+  def join_table(name, player) do
+    GenServer.call(via(name), {:join_table, player})
   end
 
-  def flip_and_pay(session) do
-    GenServer.call(session, :flip_and_pay)
+  def bet(name, player, {_, _} = bet) do
+    GenServer.call(via(name), {:bet, player, bet})
   end
 
-  def cash_out(session, player) do
-    GenServer.call(session, {:cash_out, player})
+  def flip_and_pay(name) do
+    GenServer.call(via(name), :flip_and_pay)
+  end
+
+  def cash_out(name, player) do
+    GenServer.call(via(name), {:cash_out, player})
   end
 
   defp default_stake() do
     1000
+  end
+
+  defp via(name) do
+    {
+      :via,
+      Registry,
+      {CoinFlipBettingGame.Registry.TableSession, name}
+    }
   end
 end
