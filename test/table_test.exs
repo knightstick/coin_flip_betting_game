@@ -48,6 +48,28 @@ defmodule TableTest do
     end
   end
 
+  describe "cash_out" do
+    setup [:table_with_bets]
+
+    test "removes player from players", %{table: table} do
+      table = Table.cash_out(table, "chris")
+      refute "chris" in table.players
+      assert "erin" in table.players
+    end
+
+    test "removes player from stakes", %{table: table} do
+      table = Table.cash_out(table, "chris")
+      refute Map.has_key?(table.bets.stakes, "chris")
+      assert Map.has_key?(table.bets.stakes, "erin")
+    end
+
+    test "removes all (and only) player's wagers", %{table: table} do
+      table = Table.cash_out(table, "chris")
+      refute "chris" in wagering_players(table)
+      assert "erin" in wagering_players(table)
+    end
+  end
+
   defp table_with_players(players) do
     players
     |> Enum.reduce(Table.new(), fn player, table ->
@@ -63,6 +85,12 @@ defmodule TableTest do
     table.bets.wagered
   end
 
+  defp wagering_players(table) do
+    table.bets.wagered
+    |> Enum.reduce([], fn {player, _}, acc -> [player | acc] end)
+    |> Enum.uniq()
+  end
+
   defp table(context) do
     players = ["chris"]
     {:ok, Map.put(context, :table, table_with_players(players))}
@@ -71,6 +99,16 @@ defmodule TableTest do
   defp table_with_bet(context) do
     players = ["chris"]
     table = table_with_players(players) |> Table.bet("chris", {:heads, 250})
+    {:ok, Map.put(context, :table, table)}
+  end
+
+  defp table_with_bets(context) do
+    players = ["chris", "erin"]
+    table = table_with_players(players)
+    |> Table.bet("chris", {:heads, 250})
+    |> Table.bet("chris", {:heads, 150})
+    |> Table.bet("chris", {:tails, 150})
+    |> Table.bet("erin", {:tails, 150})
     {:ok, Map.put(context, :table, table)}
   end
 end
