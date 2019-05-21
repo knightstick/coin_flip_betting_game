@@ -43,15 +43,20 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def join_or_create(table_name, player) do
-    # TODO: join if already started
+    with nil <- current_session(table_name) do
+      create_table(table_name)
+    end
+
+    join_table(table_name, player)
+  end
+
+  defp create_table(table_name) do
     table = Table.new(table_name)
 
     DynamicSupervisor.start_child(
       CoinFlipBettingGame.Supervisor.TableSession,
       {__MODULE__, table}
     )
-
-    join_table(table_name, player)
   end
 
   def join_table(name, player) do
@@ -72,6 +77,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   defp default_stake() do
     1000
+  end
+
+  defp current_session(table_name) do
+    GenServer.whereis(via(table_name))
   end
 
   defp via(name) do
