@@ -1,7 +1,11 @@
 defmodule CoinFlipBettingGame.Boundary.TableSession do
   use GenServer
 
-  alias CoinFlipBettingGame.Core.Table
+  alias CoinFlipBettingGame.Core.{Publisher, Table}
+
+  defmodule State do
+    defstruct table: nil, subscribers: []
+  end
 
   def child_spec(table) do
     %{
@@ -16,33 +20,64 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def init(table) do
-    {:ok, table}
+    {:ok, %State{table: table}}
   end
 
-  def handle_call({:join_table, player}, _from, table) do
-    table = Table.join(table, player, default_stake())
-    {:reply, table, table}
+  def handle_call(
+        {:join_table, player},
+        _from,
+        %State{table: table, subscribers: subscribers} = state
+      ) do
+    %Table{} = table = Table.join(table, player, default_stake())
+    Publisher.publish_event(subscribers, {:player_joined, {table.name, player, default_stake()}})
+    {:reply, table, %State{state | table: table}}
   end
 
-  def handle_call({:bet, player, {_, _} = bet}, _from, table) do
+  def handle_call(
+        {:bet, player, {_, _} = bet},
+        _from,
+        %State{table: table, subscribers: subscribers} = state
+      ) do
     case Table.bet(table, player, bet) do
-      %Table{} = table -> {:reply, table.bets, table}
-      error -> {:reply, error, table}
+      %Table{} = table ->
+        Publisher.publish_event(subscribers, {:bet_placed, {table.name, player, bet}})
+        {:reply, table.bets, %State{state | table: table}}
+
+      error ->
+        {:reply, error, state}
     end
   end
 
-  def handle_call(:flip_and_pay, _from, table) do
-    table = Table.flip_and_pay(table)
-    {:reply, table, table}
+  def handle_call(:flip_and_pay, _from, %State{table: table, subscribers: subscribers} = state) do
+    %Table{} = table = Table.flip_and_pay(table)
+    Publisher.publish_event(subscribers, {:bets_paid, {table.name, table.bets}})
+    {:reply, table, %State{state | table: table}}
   end
 
-  def handle_call({:cash_out, player}, _from, table) do
+  def handle_call(
+        {:cash_out, player},
+        _from,
+        %State{table: table, subscribers: subscribers} = state
+      ) do
     returned_stake = Table.total_money(table, player)
 
     case Table.cash_out(table, player) do
-      nil -> {:stop, :normal, returned_stake, nil}
-      _ -> {:reply, returned_stake, table}
+      nil ->
+        {:stop, :normal, returned_stake, nil}
+
+      %Table{} = table ->
+        Publisher.publish_event(subscribers, {:player_left, {table.name, player}})
+        {:reply, returned_stake, %State{state | table: table}}
     end
+  end
+
+  def handle_call(
+        {:subscribe_to_table_events, pid},
+        _from,
+        %State{subscribers: subscribers} = state
+      ) do
+    new_subs = [pid | subscribers] |> IO.inspect()
+    {:reply, :ok, %State{state | subscribers: new_subs}}
   end
 
   def join_or_create(table_name, player) do
@@ -76,6 +111,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def cash_out(name, player) do
     GenServer.call(via(name), {:cash_out, player})
+  end
+
+  def subscribe_to_table_events(name, pid) do
+    GenServer.call(via(name), {:subscribe_to_table_events, pid})
   end
 
   defp default_stake() do

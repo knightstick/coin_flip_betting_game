@@ -16,4 +16,8 @@ defmodule CoinFlipBettingGame do
   def cash_out(table_name, player) do
     TableSession.cash_out(table_name, player)
   end
+
+  def subscribe_to_table_events(table_name, pid) do
+    TableSession.subscribe_to_table_events(table_name, pid)
+  end
 end
