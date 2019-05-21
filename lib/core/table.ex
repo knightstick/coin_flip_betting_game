@@ -33,9 +33,12 @@ defmodule CoinFlipBettingGame.Core.Table do
     }
   end
 
+  def cash_out(%__MODULE__{players: [player]}, player), do: nil
+
   def cash_out(table, player) do
     remaining_players = List.delete(table.players, player)
     remaining_bets = Bets.cash_out(table.bets, player)
+
     %__MODULE__{table | players: remaining_players, bets: remaining_bets}
   end
 

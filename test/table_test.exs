@@ -72,6 +72,11 @@ defmodule TableTest do
       refute "chris" in wagering_players(table)
       assert "erin" in wagering_players(table)
     end
+
+    test "removing last player returns nil", %{table: table} do
+      table = Table.cash_out(table, "chris") |> Table.cash_out("erin")
+      assert is_nil(table)
+    end
   end
 
   defp table_with_players(players) do

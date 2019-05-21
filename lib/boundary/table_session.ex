@@ -38,8 +38,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def handle_call({:cash_out, player}, _from, table) do
     returned_stake = Table.total_money(table, player)
-    table = Table.cash_out(table, player)
-    {:reply, returned_stake, table}
+    case Table.cash_out(table, player) do
+      nil -> {:stop, :normal, returned_stake, nil}
+      _ -> {:reply, returned_stake, table}
+    end
   end
 
   def join_or_create(table_name, player) do
