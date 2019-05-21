@@ -113,11 +113,14 @@ defmodule TableTest do
 
   defp table_with_bets(context) do
     players = ["chris", "erin"]
-    table = table_with_players(players)
-    |> Table.bet("chris", {:heads, 250})
-    |> Table.bet("chris", {:heads, 150})
-    |> Table.bet("chris", {:tails, 150})
-    |> Table.bet("erin", {:tails, 150})
+
+    table =
+      table_with_players(players)
+      |> Table.bet("chris", {:heads, 250})
+      |> Table.bet("chris", {:heads, 150})
+      |> Table.bet("chris", {:tails, 150})
+      |> Table.bet("erin", {:tails, 150})
+
     {:ok, Map.put(context, :table, table)}
   end
 end

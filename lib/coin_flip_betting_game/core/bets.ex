@@ -17,7 +17,7 @@ defmodule CoinFlipBettingGame.Core.Bets do
       new_wagers = [{player, bet} | bets.wagered]
       new_stakes = stake_bet(bets.stakes, player, stake)
 
-      %__MODULE__{ bets | wagered: new_wagers, stakes: new_stakes }
+      %__MODULE__{bets | wagered: new_wagers, stakes: new_stakes}
     else
       {:error, "cannot bet more than currently staked"}
     end
@@ -29,7 +29,7 @@ defmodule CoinFlipBettingGame.Core.Bets do
 
   def pay_bets(bets, value) do
     new_stakes = pay_winners(bets.stakes, bets.wagered, value)
-    %__MODULE__{ bets | wagered: [], stakes: new_stakes }
+    %__MODULE__{bets | wagered: [], stakes: new_stakes}
   end
 
   defp pay_winners(stakes, wagered, winning_value) do
@@ -44,7 +44,8 @@ defmodule CoinFlipBettingGame.Core.Bets do
     wagered
     |> Enum.map(fn {a_player, {value, amount}} ->
       case {a_player, value} do
-        {^player, ^winning_value} -> amount * 2 # Hardcoded odds for now
+        # Hardcoded odds for now
+        {^player, ^winning_value} -> amount * 2
         _ -> 0
       end
     end)
@@ -54,7 +55,7 @@ defmodule CoinFlipBettingGame.Core.Bets do
   def cash_out(bets, player) do
     new_stakes = Map.delete(bets.stakes, player)
     new_wagers = Enum.reject(bets.wagered, fn {a_player, _bet} -> a_player == player end)
-    %__MODULE__{ bets | stakes: new_stakes, wagered: new_wagers }
+    %__MODULE__{bets | stakes: new_stakes, wagered: new_wagers}
   end
 
   def total_money(bets, player) do

@@ -2,11 +2,11 @@ defmodule CoinFlipBettingGame.Core.Coin do
   defstruct value: nil
 
   def new() do
-    struct!(__MODULE__, [value: nil])
+    struct!(__MODULE__, value: nil)
   end
 
   def flip() do
-    struct!(__MODULE__, [value: random_value()])
+    struct!(__MODULE__, value: random_value())
   end
 
   defp random_value() do

@@ -12,7 +12,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def start_link(table) do
-    GenServer.start(__MODULE__, table, [name: via(table.name)])
+    GenServer.start(__MODULE__, table, name: via(table.name))
   end
 
   def init(table) do
@@ -38,6 +38,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def handle_call({:cash_out, player}, _from, table) do
     returned_stake = Table.total_money(table, player)
+
     case Table.cash_out(table, player) do
       nil -> {:stop, :normal, returned_stake, nil}
       _ -> {:reply, returned_stake, table}
