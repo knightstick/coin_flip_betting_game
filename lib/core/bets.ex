@@ -13,10 +13,14 @@ defmodule CoinFlipBettingGame.Core.Bets do
   end
 
   def bet(bets, player, {_value, stake} = bet) do
-    new_wagers = [{player, bet} | bets.wagered]
-    new_stakes = stake_bet(bets.stakes, player, stake)
+    if bets.stakes[player] > stake do
+      new_wagers = [{player, bet} | bets.wagered]
+      new_stakes = stake_bet(bets.stakes, player, stake)
 
-    %__MODULE__{ bets | wagered: new_wagers, stakes: new_stakes }
+      %__MODULE__{ bets | wagered: new_wagers, stakes: new_stakes }
+    else
+      {:error, "cannot bet more than currently staked"}
+    end
   end
 
   defp stake_bet(stakes, player, stake) do

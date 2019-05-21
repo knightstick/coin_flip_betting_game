@@ -25,8 +25,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def handle_call({:bet, player, {_, _} = bet}, _from, table) do
-    table = Table.bet(table, player, bet)
-    {:reply, table.bets, table}
+    case Table.bet(table, player, bet) do
+      %Table{} = table -> {:reply, table.bets, table}
+      error -> {:reply, error, table}
+    end
   end
 
   def handle_call(:flip_and_pay, _from, table) do

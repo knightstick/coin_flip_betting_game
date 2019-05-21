@@ -31,6 +31,10 @@ defmodule TableTest do
       table = Table.bet(table, "chris", {:heads, 500})
       assert stakes(table, "chris") == 1000 - 500
     end
+
+    test "cannot bet more than staked", %{table: table} do
+      assert {:error, _} = Table.bet(table, "chris", {:heads, 10_000})
+    end
   end
 
   describe "flip_and_pay" do

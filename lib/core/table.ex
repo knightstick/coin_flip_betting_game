@@ -16,7 +16,11 @@ defmodule CoinFlipBettingGame.Core.Table do
   end
 
   def bet(table, player, {_, _} = bet) do
-    %__MODULE__{table | bets: Bets.bet(table.bets, player, bet)}
+    with %Bets{} = new_bets <- Bets.bet(table.bets, player, bet) do
+      %__MODULE__{table | bets: new_bets}
+    else
+      errors -> errors
+    end
   end
 
   def flip_and_pay(table) do
