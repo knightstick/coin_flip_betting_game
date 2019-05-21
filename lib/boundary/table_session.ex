@@ -21,7 +21,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def handle_call({:join_table, player}, _from, table) do
     table = Table.join(table, player, default_stake())
-    {:reply, table.bets.stakes, table}
+    {:reply, table, table}
   end
 
   def handle_call({:bet, player, {_, _} = bet}, _from, table) do
@@ -33,7 +33,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def handle_call(:flip_and_pay, _from, table) do
     table = Table.flip_and_pay(table)
-    {:reply, table.bets.stakes, table}
+    {:reply, table, table}
   end
 
   def handle_call({:cash_out, player}, _from, table) do
