@@ -1,8 +1,16 @@
 defmodule CoinFlipBettingGame.Boundary.Publisher do
   use GenServer
 
+  def child_spec(topic) do
+    %{
+      id: {__MODULE__, topic},
+      start: {__MODULE__, :start_link, [{topic, []}]},
+      restart: :temporary
+    }
+  end
+
   def start_link({topic, subscribers}) when is_list(subscribers) do
-    GenServer.start(__MODULE__, {topic, subscribers}, name: via(topic))
+    GenServer.start_link(__MODULE__, {topic, subscribers}, name: via(topic))
   end
 
   def init({topic, subscribers}) when is_list(subscribers) do

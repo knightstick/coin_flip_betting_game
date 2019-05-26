@@ -16,7 +16,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def start_link(table) do
-    GenServer.start(__MODULE__, table, name: via(table.name))
+    GenServer.start_link(__MODULE__, table, name: via(table.name))
   end
 
   def init(table) do
@@ -78,6 +78,12 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   defp create_table(table_name) do
     table = Table.new(table_name)
 
+    # Maybe we should move join_or_create to top level, and handle both of these
+    # there?
+    DynamicSupervisor.start_child(
+      CoinFlipBettingGame.Supervisor.Publisher,
+      {CoinFlipBettingGame.Boundary.Publisher, table_name}
+    )
     DynamicSupervisor.start_child(
       CoinFlipBettingGame.Supervisor.TableSession,
       {__MODULE__, table}
