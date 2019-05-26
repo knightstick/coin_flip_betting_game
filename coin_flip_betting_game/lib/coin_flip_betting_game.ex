@@ -2,6 +2,10 @@ defmodule CoinFlipBettingGame do
   alias CoinFlipBettingGame.Boundary.{TableSession, Publisher}
   alias CoinFlipBettingGame.Core.{Bets, Table}
 
+  def list_tables() do
+    TableSession.list_tables()
+  end
+
   def join_table(table_name, player) do
     with %Table{} = table <- TableSession.join_or_create(table_name, player),
          # TODO: money

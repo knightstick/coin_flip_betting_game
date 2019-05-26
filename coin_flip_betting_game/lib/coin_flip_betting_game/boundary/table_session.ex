@@ -67,6 +67,24 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     end
   end
 
+  def list_tables() do
+    CoinFlipBettingGame.Supervisor.TableSession
+    |> DynamicSupervisor.which_children()
+    |> Enum.filter(&table_session_pid?/1)
+    |> Enum.map(&active_sessions/1)
+  end
+
+  defp table_session_pid?({:undefined, _pid, :worker, [__MODULE__]}) do
+    true
+  end
+  defp table_session_pid?(_), do: false
+
+  defp active_sessions({:undefined, pid, :worker, [__MODULE__]}) do
+    CoinFlipBettingGame.Registry.TableSession
+    |> Registry.keys(pid)
+    |> Enum.at(0)
+  end
+
   def join_or_create(table_name, player) do
     with nil <- current_session(table_name) do
       create_table(table_name)
