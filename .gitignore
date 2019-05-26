@@ -23,3 +23,6 @@ erl_crash.dump
 coin_flip_betting_game-*.tar
 
 .elixir_ls/
+
+TODO
+.vscode/
