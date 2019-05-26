@@ -1,0 +1,9 @@
+<h1>Coin Flip Betting Game</h1>
+
+<table>
+  <%= for table_session <- @table_sessions do %>
+    <tr>
+      <td><%= table_session %>
+    </tr>
+  <% end %>
+</table>

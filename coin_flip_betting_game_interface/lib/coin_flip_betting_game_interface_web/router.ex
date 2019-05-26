@@ -16,7 +16,7 @@ defmodule CoinFlipBettingGameInterfaceWeb.Router do
   scope "/", CoinFlipBettingGameInterfaceWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", TableSessionController, :index
   end
 
   # Other scopes may use custom stacks.
