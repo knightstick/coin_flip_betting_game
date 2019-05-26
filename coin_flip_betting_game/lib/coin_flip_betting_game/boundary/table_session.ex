@@ -84,6 +84,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
       CoinFlipBettingGame.Supervisor.Publisher,
       {CoinFlipBettingGame.Boundary.Publisher, table_name}
     )
+
     DynamicSupervisor.start_child(
       CoinFlipBettingGame.Supervisor.TableSession,
       {__MODULE__, table}
