@@ -9,8 +9,11 @@ defmodule CoinFlipBettingGame.Application do
     # List all child processes to be supervised
     children = [
       {Registry, [name: CoinFlipBettingGame.Registry.TableSession, keys: :unique]},
+      {Registry, [name: CoinFlipBettingGame.Registry.Publisher, keys: :unique]},
       {DynamicSupervisor,
-       [name: CoinFlipBettingGame.Supervisor.TableSession, strategy: :one_for_one]}
+       [name: CoinFlipBettingGame.Supervisor.TableSession, strategy: :one_for_one]},
+      {DynamicSupervisor,
+       [name: CoinFlipBettingGame.Supervisor.Publisher, strategy: :one_for_one]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

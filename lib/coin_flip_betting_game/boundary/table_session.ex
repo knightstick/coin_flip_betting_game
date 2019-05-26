@@ -3,6 +3,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   alias CoinFlipBettingGame.Core.Table
 
+  defmodule State do
+    defstruct table: nil
+  end
+
   def child_spec(table) do
     %{
       id: {__MODULE__, table.name},
@@ -12,36 +16,54 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def start_link(table) do
-    GenServer.start(__MODULE__, table, name: via(table.name))
+    GenServer.start_link(__MODULE__, table, name: via(table.name))
   end
 
   def init(table) do
-    {:ok, table}
+    {:ok, %State{table: table}}
   end
 
-  def handle_call({:join_table, player}, _from, table) do
-    table = Table.join(table, player, default_stake())
-    {:reply, table, table}
+  def handle_call(
+        {:join_table, player},
+        _from,
+        %State{table: table} = state
+      ) do
+    %Table{} = table = Table.join(table, player, default_stake())
+    {:reply, table, %State{state | table: table}}
   end
 
-  def handle_call({:bet, player, {_, _} = bet}, _from, table) do
+  def handle_call(
+        {:bet, player, {_, _} = bet},
+        _from,
+        %State{table: table} = state
+      ) do
     case Table.bet(table, player, bet) do
-      %Table{} = table -> {:reply, table.bets, table}
-      error -> {:reply, error, table}
+      %Table{} = table ->
+        {:reply, table.bets, %State{state | table: table}}
+
+      error ->
+        {:reply, error, state}
     end
   end
 
-  def handle_call(:flip_and_pay, _from, table) do
-    table = Table.flip_and_pay(table)
-    {:reply, table, table}
+  def handle_call(:flip_and_pay, _from, %State{table: table} = state) do
+    %Table{} = table = Table.flip_and_pay(table)
+    {:reply, table, %State{state | table: table}}
   end
 
-  def handle_call({:cash_out, player}, _from, table) do
+  def handle_call(
+        {:cash_out, player},
+        _from,
+        %State{table: table} = state
+      ) do
     returned_stake = Table.total_money(table, player)
 
     case Table.cash_out(table, player) do
-      nil -> {:stop, :normal, returned_stake, nil}
-      _ -> {:reply, returned_stake, table}
+      nil ->
+        {:stop, :normal, returned_stake, nil}
+
+      %Table{} = table ->
+        {:reply, returned_stake, %State{state | table: table}}
     end
   end
 
@@ -56,6 +78,12 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   defp create_table(table_name) do
     table = Table.new(table_name)
 
+    # Maybe we should move join_or_create to top level, and handle both of these
+    # there?
+    DynamicSupervisor.start_child(
+      CoinFlipBettingGame.Supervisor.Publisher,
+      {CoinFlipBettingGame.Boundary.Publisher, table_name}
+    )
     DynamicSupervisor.start_child(
       CoinFlipBettingGame.Supervisor.TableSession,
       {__MODULE__, table}
