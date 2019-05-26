@@ -9,6 +9,7 @@ defmodule CoinFlipBettingGame.Application do
     # List all child processes to be supervised
     children = [
       {Registry, [name: CoinFlipBettingGame.Registry.TableSession, keys: :unique]},
+      {Registry, [name: CoinFlipBettingGame.Registry.Publisher, keys: :unique]},
       {DynamicSupervisor,
        [name: CoinFlipBettingGame.Supervisor.TableSession, strategy: :one_for_one]}
     ]

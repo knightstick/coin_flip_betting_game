@@ -1,44 +1,52 @@
 defmodule CoinFlipBettingGame.Boundary.Publisher do
   use GenServer
 
-  def start_link(subscribers) when is_list(subscribers) do
-    GenServer.start(__MODULE__, subscribers, name: __MODULE__)
+  def start_link({topic, subscribers}) when is_list(subscribers) do
+    GenServer.start(__MODULE__, {topic, subscribers}, name: via(topic))
   end
 
-  def init(subscribers) when is_list(subscribers) do
-    MapSet.new(subscribers)
-    {:ok, subscribers}
+  def init({topic, subscribers}) when is_list(subscribers) do
+    subscribers = MapSet.new(subscribers)
+    {:ok, {topic, subscribers}}
   end
 
   # Can we just use from instead?
-  def handle_call({:subscribe, pid}, _from, subscribers) do
+  def handle_call({:subscribe, pid}, _from, {table_name, subscribers}) do
     new_subscribers = MapSet.put(subscribers, pid)
-    {:reply, :ok, new_subscribers}
+    {:reply, :ok, {table_name, new_subscribers}}
   end
 
-  def handle_call({:unsubscribe, pid}, _from, subscribers) do
+  def handle_call({:unsubscribe, pid}, _from, {table_name, subscribers}) do
     remaining_subscribers = MapSet.delete(subscribers, pid)
-    {:reply, :ok, remaining_subscribers}
+    {:reply, :ok, {table_name, remaining_subscribers}}
   end
 
-  def handle_call({:publish_event, event}, _from, subscribers) do
+  def handle_call({:publish_event, event}, _from, {_, subscribers} = state) do
     Enum.each(subscribers, &send_event(&1, event))
-    {:reply, :ok, subscribers}
+    {:reply, :ok, state}
   end
 
   defp send_event(pid, event) do
     send(pid, event)
   end
 
-  def subscribe(publisher \\ __MODULE__, pid) when is_pid(pid) do
-    GenServer.call(publisher, {:subscribe, pid})
+  def subscribe(topic, pid) when is_pid(pid) do
+    GenServer.call(via(topic), {:subscribe, pid})
   end
 
-  def unsubscribe(publisher \\ __MODULE__, pid) when is_pid(pid) do
-    GenServer.call(publisher, {:unsubscribe, pid})
+  def unsubscribe(topic, pid) when is_pid(pid) do
+    GenServer.call(via(topic), {:unsubscribe, pid})
   end
 
-  def publish_event(publisher \\ __MODULE__, event) do
-    GenServer.call(publisher, {:publish_event, event})
+  def publish_event(topic, event) do
+    GenServer.call(via(topic), {:publish_event, event})
+  end
+
+  defp via(name) do
+    {
+      :via,
+      Registry,
+      {CoinFlipBettingGame.Registry.Publisher, name}
+    }
   end
 end
