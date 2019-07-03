@@ -14,6 +14,10 @@ defmodule CoinFlipBettingGame do
     end
   end
 
+  def get_table(table_name) do
+    TableSession.get_table(table_name)
+  end
+
   def bet(table_name, player, {_, _} = bet) do
     with %Bets{} = bets <- TableSession.bet(table_name, player, bet),
          :ok <- Publisher.publish_event(table_name, {:bet_placed, {table_name, player, bet}}) do

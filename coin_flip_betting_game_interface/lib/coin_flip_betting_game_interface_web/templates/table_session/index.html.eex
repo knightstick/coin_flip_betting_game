@@ -3,7 +3,9 @@
 <table>
   <%= for table_session <- @table_sessions do %>
     <tr>
-      <td><%= table_session %>
+      <td><%= link(table_session, to: Routes.table_session_path(@conn, :show, table_session)) %>
     </tr>
   <% end %>
 </table>
+
+<%= button("New table", to: Routes.table_session_path(@conn, :create)) %>

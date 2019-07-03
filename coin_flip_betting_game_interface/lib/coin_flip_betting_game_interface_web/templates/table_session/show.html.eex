@@ -1,0 +1,5 @@
+<h1>Coin Flip Betting Game - <%= table_name(@table_session) %></h1>
+
+<p><%= coin_value(@table_session) %></p>
+
+<%= button("Flip", to: Routes.table_session_table_session_path(@conn, :flip, table_name(@table_session)), method: "post") %>
