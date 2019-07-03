@@ -7,3 +7,5 @@
     </tr>
   <% end %>
 </table>
+
+<%= button("New table", to: "/table-sessions", method: "post") %>
