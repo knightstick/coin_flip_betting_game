@@ -16,6 +16,14 @@ defmodule CoinFlipBettingGameInterface do
     CoinFlipBettingGame.join_table(random_table_name(), web_player())
   end
 
+  def get_table(id) do
+    CoinFlipBettingGame.get_table(id)
+  end
+
+  def flip_coin_on_table(id) do
+    CoinFlipBettingGame.flip_and_pay(id)
+  end
+
   defp random_table_name() do
     RandomName.pick()
   end

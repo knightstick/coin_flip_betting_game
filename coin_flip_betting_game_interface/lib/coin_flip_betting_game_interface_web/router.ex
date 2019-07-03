@@ -17,8 +17,10 @@ defmodule CoinFlipBettingGameInterfaceWeb.Router do
     pipe_through(:browser)
 
     get("/", TableSessionController, :index)
-    get("/table-sessions", TableSessionController, :index)
-    post("/table-sessions", TableSessionController, :create)
+
+    resources("/table-sessions", TableSessionController, only: [:index, :show, :create]) do
+      post("/flip", TableSessionController, :flip)
+    end
   end
 
   # Other scopes may use custom stacks.
