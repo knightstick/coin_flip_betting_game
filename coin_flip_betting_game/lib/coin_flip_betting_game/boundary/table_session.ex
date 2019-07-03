@@ -32,6 +32,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     {:reply, table, %State{state | table: table}}
   end
 
+  def handle_call(:get_table, _from, %State{table: table} = state) do
+    {:reply, table, state}
+  end
+
   def handle_call(
         {:bet, player, {_, _} = bet},
         _from,
@@ -77,6 +81,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   defp table_session_pid?({:undefined, _pid, :worker, [__MODULE__]}) do
     true
   end
+
   defp table_session_pid?(_), do: false
 
   defp active_sessions({:undefined, pid, :worker, [__MODULE__]}) do
@@ -111,6 +116,10 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
 
   def join_table(name, player) do
     GenServer.call(via(name), {:join_table, player})
+  end
+
+  def get_table(name) do
+    GenServer.call(via(name), :get_table)
   end
 
   def bet(name, player, {_, _} = bet) do
