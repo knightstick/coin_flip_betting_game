@@ -12,8 +12,8 @@ defmodule CoinFlipBettingGameInterfaceWeb.TableSessionController do
   end
 
   def flip(conn, %{"table_session_id" => id}) do
-    table = CoinFlipBettingGameInterface.flip_coin_on_table(id)
-    render(conn, "show.html", table_session: table)
+    CoinFlipBettingGameInterface.flip_coin_on_table(id)
+    redirect(conn, to: Routes.table_session_path(conn, :show, id))
   end
 
   def create(conn, _params) do
