@@ -24,7 +24,7 @@ defmodule CoinFlipBettingGameInterfaceWeb.Endpoint do
   end
 
   plug Plug.RequestId
-  plug Plug.Logger
+  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -40,7 +40,7 @@ defmodule CoinFlipBettingGameInterfaceWeb.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_coin_flip_betting_game_interface_key",
-    signing_salt: "VTlfuM1x"
+    signing_salt: "CjYB0pRB"
 
   plug CoinFlipBettingGameInterfaceWeb.Router
 end

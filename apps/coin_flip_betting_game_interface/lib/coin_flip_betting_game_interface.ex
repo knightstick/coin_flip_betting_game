@@ -9,19 +9,19 @@ defmodule CoinFlipBettingGameInterface do
   if it comes from the database, an external API or others.
   """
   def get_table_sessions() do
-    CoinFlipBettingGame.list_tables()
+    CoinFlipBettingGameEngine.list_tables()
   end
 
   def create_table_session() do
-    CoinFlipBettingGame.join_table(random_table_name(), web_player())
+    CoinFlipBettingGameEngine.join_table(random_table_name(), web_player())
   end
 
   def get_table(id) do
-    CoinFlipBettingGame.get_table(id)
+    CoinFlipBettingGameEngine.get_table(id)
   end
 
   def flip_coin_on_table(id) do
-    CoinFlipBettingGame.flip_and_pay(id)
+    CoinFlipBettingGameEngine.flip_and_pay(id)
   end
 
   defp random_table_name() do

@@ -10,7 +10,7 @@ use Mix.Config
 # Configures the endpoint
 config :coin_flip_betting_game_interface, CoinFlipBettingGameInterfaceWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "rBiCpQbq2MTfOBsWY8soH9sLSb3TURoX0ywP3r7GcSZACRmMzGenhcgs9ZN0WAAb",
+  secret_key_base: "FjH/gwQAArhzZVpcwa3z/5tqBoa3gU2OhW/wREtFNNZX9mq1tHLprPsoKYBYTjxw",
   render_errors: [view: CoinFlipBettingGameInterfaceWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: CoinFlipBettingGameInterface.PubSub, adapter: Phoenix.PubSub.PG2]
 
