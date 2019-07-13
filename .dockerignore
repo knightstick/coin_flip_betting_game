@@ -1,0 +1,5 @@
+_build
+apps/coin_flip_betting_game_engine/_build
+apps/coin_flip_betting_game_interface/_build
+deps
+assets/node_modules

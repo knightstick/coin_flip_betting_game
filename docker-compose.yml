@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  web:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+      target: development
+    env_file: db.env
+    environment:
+    - POSTGRES_HOST=dockerdb
+    ports:
+    - "4000:4000"
+    volumes:
+    - .:/app
+    links:
+    - db:dockerdb
+    depends_on:
+    - db
+
+  db:
+    image: postgres:11
+    env_file: db.env
