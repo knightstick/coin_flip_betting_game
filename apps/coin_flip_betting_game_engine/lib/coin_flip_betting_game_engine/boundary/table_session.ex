@@ -1,7 +1,7 @@
-defmodule CoinFlipBettingGame.Boundary.TableSession do
+defmodule CoinFlipBettingGameEngine.Boundary.TableSession do
   use GenServer
 
-  alias CoinFlipBettingGame.Core.Table
+  alias CoinFlipBettingGameEngine.Core.Table
 
   defmodule State do
     defstruct table: nil
@@ -72,7 +72,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   end
 
   def list_tables() do
-    CoinFlipBettingGame.Supervisor.TableSession
+    CoinFlipBettingGameEngine.Supervisor.TableSession
     |> DynamicSupervisor.which_children()
     |> Enum.filter(&table_session_pid?/1)
     |> Enum.map(&active_sessions/1)
@@ -85,7 +85,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
   defp table_session_pid?(_), do: false
 
   defp active_sessions({:undefined, pid, :worker, [__MODULE__]}) do
-    CoinFlipBettingGame.Registry.TableSession
+    CoinFlipBettingGameEngine.Registry.TableSession
     |> Registry.keys(pid)
     |> Enum.at(0)
   end
@@ -104,12 +104,12 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     # Maybe we should move join_or_create to top level, and handle both of these
     # there?
     DynamicSupervisor.start_child(
-      CoinFlipBettingGame.Supervisor.Publisher,
-      {CoinFlipBettingGame.Boundary.Publisher, table_name}
+      CoinFlipBettingGameEngine.Supervisor.Publisher,
+      {CoinFlipBettingGameEngine.Boundary.Publisher, table_name}
     )
 
     DynamicSupervisor.start_child(
-      CoinFlipBettingGame.Supervisor.TableSession,
+      CoinFlipBettingGameEngine.Supervisor.TableSession,
       {__MODULE__, table}
     )
   end
@@ -146,7 +146,7 @@ defmodule CoinFlipBettingGame.Boundary.TableSession do
     {
       :via,
       Registry,
-      {CoinFlipBettingGame.Registry.TableSession, name}
+      {CoinFlipBettingGameEngine.Registry.TableSession, name}
     }
   end
 end

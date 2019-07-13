@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :coin_flip_betting_game, key: :value
+#     config :coin_flip_betting_game_engine, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:coin_flip_betting_game, :key)
+#     Application.get_env(:coin_flip_betting_game_engine, :key)
 #
 # You can also configure a third-party app:
 #

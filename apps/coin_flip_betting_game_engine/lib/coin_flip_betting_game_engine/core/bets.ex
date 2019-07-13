@@ -1,4 +1,4 @@
-defmodule CoinFlipBettingGame.Core.Bets do
+defmodule CoinFlipBettingGameEngine.Core.Bets do
   defstruct stakes: %{}, wagered: []
 
   def new() do

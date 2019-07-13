@@ -1,6 +1,6 @@
-defmodule CoinFlipBettingGame do
-  alias CoinFlipBettingGame.Boundary.{TableSession, Publisher}
-  alias CoinFlipBettingGame.Core.{Bets, Table}
+defmodule CoinFlipBettingGameEngine do
+  alias CoinFlipBettingGameEngine.Boundary.{TableSession, Publisher}
+  alias CoinFlipBettingGameEngine.Core.{Bets, Table}
 
   def list_tables() do
     TableSession.list_tables()

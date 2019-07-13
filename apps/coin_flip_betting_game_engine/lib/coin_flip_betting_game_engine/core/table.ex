@@ -1,5 +1,5 @@
-defmodule CoinFlipBettingGame.Core.Table do
-  alias CoinFlipBettingGame.Core.{Coin, Bets}
+defmodule CoinFlipBettingGameEngine.Core.Table do
+  alias CoinFlipBettingGameEngine.Core.{Coin, Bets}
 
   defstruct name: nil, coin: nil, players: [], bets: nil
 

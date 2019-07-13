@@ -1,7 +1,7 @@
 defmodule CoinTest do
   use ExUnit.Case
 
-  alias CoinFlipBettingGame.Core.Coin
+  alias CoinFlipBettingGameEngine.Core.Coin
 
   describe "flip" do
     test "picks either heads or tails" do

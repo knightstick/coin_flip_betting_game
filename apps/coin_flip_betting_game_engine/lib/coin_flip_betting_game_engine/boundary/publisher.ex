@@ -1,4 +1,4 @@
-defmodule CoinFlipBettingGame.Boundary.Publisher do
+defmodule CoinFlipBettingGameEngine.Boundary.Publisher do
   use GenServer
 
   def child_spec(topic) do
@@ -54,7 +54,7 @@ defmodule CoinFlipBettingGame.Boundary.Publisher do
     {
       :via,
       Registry,
-      {CoinFlipBettingGame.Registry.Publisher, name}
+      {CoinFlipBettingGameEngine.Registry.Publisher, name}
     }
   end
 end

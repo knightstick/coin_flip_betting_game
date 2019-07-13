@@ -1,7 +1,7 @@
 defmodule TableTest do
   use ExUnit.Case
 
-  alias CoinFlipBettingGame.Core.Table
+  alias CoinFlipBettingGameEngine.Core.Table
 
   describe "join" do
     test "joining adds name to list of players" do

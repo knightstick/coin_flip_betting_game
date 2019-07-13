@@ -1,4 +1,4 @@
-defmodule CoinFlipBettingGame.Core.Coin do
+defmodule CoinFlipBettingGameEngine.Core.Coin do
   defstruct value: nil
 
   def new() do
