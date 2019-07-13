@@ -11,7 +11,6 @@ RUN mix local.hex --force && \
 # Install Postgres, Node and inotify-tools (for Live Reload)
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y \
-       postgresql-client \
        nodejs \
        inotify-tools
 
